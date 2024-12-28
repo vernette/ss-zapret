@@ -6,6 +6,8 @@ services:
       args:
         ZAPRET_TAG: ${ZAPRET_TAG}
     image: ss-zapret:${ZAPRET_TAG}
+    cap_add:
+      - NET_ADMIN
     env_file:
       - .env
     environment:
