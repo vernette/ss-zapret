@@ -1,0 +1,25 @@
+services:
+  shadowsocks-server:
+    container_name: ss-zapret
+    build:
+      context: .
+      args:
+        ZAPRET_TAG: ${ZAPRET_TAG}
+    image: ss-zapret:${ZAPRET_TAG}
+    env_file:
+      - .env
+    environment:
+      SS_HOST: 0.0.0.0
+      SS_PORT: ${SS_PORT}
+      SS_PASSWORD: ${SS_PASSWORD}
+      SS_ENCRYPT_METHOD: ${SS_ENCRYPT_METHOD:-chacha20-ietf-poly1305}
+      SS_TIMEOUT: 300
+    ports:
+      - "${SS_PORT}:${SS_PORT}"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "${SS_PORT}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
