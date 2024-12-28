@@ -1,6 +1,7 @@
 DOCKER_IMAGE = ss-zapret
 CURRENT_TAG = $(shell grep ZAPRET_TAG .env 2>/dev/null | cut -d '=' -f2)
 LATEST_TAG = $(shell wget -qO- https://api.github.com/repos/bol-van/zapret/releases/latest | grep -e "tag_name" | cut -d '"' -f 4)
+DOCKER_COMPOSE_CMD = $(shell which docker-compose 2>/dev/null || echo "docker compose")
 
 # Всегда используем текущий тег, если он есть, иначе последний
 TAG = $(if $(CURRENT_TAG),$(CURRENT_TAG),$(LATEST_TAG))
@@ -12,7 +13,7 @@ build:
 	else \
 		echo "ZAPRET_TAG=${TAG}" >> .env; \
 	fi
-	docker-compose build --build-arg ZAPRET_TAG=${TAG}
+	$(DOCKER_COMPOSE_CMD) build --build-arg ZAPRET_TAG=${TAG}
 
 update:
 	@if [ "${LATEST_TAG}" != "${TAG}" ]; then \
@@ -25,15 +26,15 @@ update:
 
 up:
 	@echo "Запускаем контейнер с тегом ${TAG}..."
-	docker-compose up -d
+	$(DOCKER_COMPOSE_CMD) up -d
 
 down:
 	@echo "Останавливаем контейнер с тегом ${TAG}..."
-	docker-compose down
+	$(DOCKER_COMPOSE_CMD) down
 
 logs:
 	@echo "Просмотр логов контейнера с тегом ${TAG}..."
-	docker-compose logs -f
+	$(DOCKER_COMPOSE_CMD) logs -f
 
 clean:
 	@echo "Удаляем образ Docker с тегом ${TAG}..."
