@@ -18,6 +18,9 @@ services:
       SS_TIMEOUT: 300
     ports:
       - "${SS_PORT}:${SS_PORT}"
+    # Если нужно подкинуть свой конфиг, то раскомментируйте
+    # volumes:
+    #   - ./config:/opt/zapret/config
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "${SS_PORT}"]
