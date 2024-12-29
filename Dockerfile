@@ -4,6 +4,7 @@ ARG ZAPRET_TAG
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     apk add --no-cache \
     curl \
+    nano \
     ipset \
     iptables \
     ip6tables \
