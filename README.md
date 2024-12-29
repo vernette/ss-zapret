@@ -8,21 +8,14 @@
 
 Во всех популярных дистрибутивах оба устанавливаются через пакетный менеджер. Пара примеров:
 
-#### Ubuntu/Debian
-
 ```bash
+# Ubuntu/Debian
 sudo apt install make git
-```
 
-#### Fedora
-
-```bash
+#Fedora
 sudo dnf install make git
-```
 
-#### Arch Linux
-
-```bash
+# Arch Linux
 sudo pacman -S make git
 ```
 
