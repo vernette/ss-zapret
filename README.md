@@ -12,7 +12,7 @@
 # Ubuntu/Debian
 sudo apt install make git
 
-#Fedora
+# Fedora
 sudo dnf install make git
 
 # Arch Linux
