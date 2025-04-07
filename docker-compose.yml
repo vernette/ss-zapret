@@ -1,5 +1,5 @@
 services:
-  socks-zapret:
+  ss-zapret:
     build:
       context: .
       args:
