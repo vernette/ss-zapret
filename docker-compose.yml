@@ -8,7 +8,7 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "127.0.0.1:${SS_PORT}:${SS_PORT}"
+      - "${SS_PORT}:${SS_PORT}"
     volumes:
       - ./config:/opt/zapret/config
     environment:
