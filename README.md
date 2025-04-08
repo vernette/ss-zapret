@@ -7,6 +7,19 @@
 
 ## Использование
 
+0. Установить git:
+
+```bash
+# Ubuntu/Debian
+sudo apt install git
+
+# Fedora
+sudo dnf install git
+
+# Arch Linux
+sudo pacman -S git
+```
+
 1. Установить Docker:
 
 ```bash
@@ -22,12 +35,22 @@ cd ss-zapret
 
 3. Cоздать `.env` файл (за основу можно взять `.env.example`) и отредактировать его. Используйте свой любимый текстовый редактор:
 
+`.env.example`:
+
+```env
+SS_PORT=8388
+SS_PASSWORD=SuperSecurePassword
+SS_ENCRYPT_METHOD=chacha20-ietf-poly1305
+SS_TIMEOUT=300
+```
+
 ```bash
 cp .env.example .env
 nano .env
 ```
 
-> [!WARNING] > **ВАЖНО** Смените стандартный пароль для Shadowsocks и, при необходимости, другие переменные окружения
+> [!WARNING]
+> **ВАЖНО** Смените стандартный пароль для Shadowsocks и, при необходимости, другие переменные окружения
 
 4. Запустить контейнер:
 
