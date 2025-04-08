@@ -103,8 +103,8 @@ nano config
 ```
 NFQWS_OPT="
 --filter-tcp=80 --methodeol --new
---filter-tcp=443 --hostlist-domains=googlevideo.com --dpi-desync=fakedsplit --dpi-desync-fooling=md5sig --dpi-desync-split-pos=1 --new
---filter-tcp=443 --dpi-desync=multisplit --dpi-desync-split-pos=2 --dpi-desync-split-seqovl=336 --dpi-desync-split-seqovl-pattern=/opt/zapret/files/fake/tls_clienthello_iana_org.bin --new
+--filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com --dpi-desync=fakedsplit --dpi-desync-fooling=md5sig --dpi-desync-split-pos=1 --new
+--filter-tcp=443 --dpi-desync=fake --dpi-desync-fooling=badseq --new
 --filter-udp=443 --dpi-desync=fake --dpi-desync-repeats=6
 "
 ```
