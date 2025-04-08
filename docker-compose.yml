@@ -1,9 +1,6 @@
 services:
   ss-zapret:
-    build:
-      context: .
-      args:
-        ZAPRET_TAG: "v70.5"  # https://github.com/bol-van/zapret/releases
+    image: vernette/ss-zapret:v70.5
     container_name: zapret-proxy
     cap_add:
       - NET_ADMIN
