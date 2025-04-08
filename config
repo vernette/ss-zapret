@@ -1,3 +1,5 @@
+FWTYPE=iptables
+
 SET_MAXELEM=522288
 
 IPSET_OPT="hashsize 262144 maxelem $SET_MAXELEM"
