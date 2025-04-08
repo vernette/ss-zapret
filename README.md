@@ -37,9 +37,7 @@ git clone https://github.com/vernette/ss-zapret
 cd ss-zapret
 ```
 
-3. Cоздать `.env` файл (за основу можно взять `.env.example`) и отредактировать его. Используйте свой любимый текстовый редактор:
-
-`.env.example`:
+3. Cоздать `.env` файл. За основу можно взять `.env.example`:
 
 ```env
 SS_PORT=8388
@@ -47,6 +45,8 @@ SS_PASSWORD=SuperSecurePassword
 SS_ENCRYPT_METHOD=chacha20-ietf-poly1305
 SS_TIMEOUT=300
 ```
+
+И отредактировать его:
 
 ```bash
 cp .env.example .env
