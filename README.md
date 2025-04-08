@@ -90,7 +90,10 @@ SKIP_TPWS=1 REPEATS=8 ./blockcheck.sh
 
 ## Конфигурация
 
-В репозитории находится конфиг, в котором сразу же включены параметры для Discord и настроенные стратегии для запуска на [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66).
+В репозитории находится конфиг, в котором сразу же включены параметры для Discord и настроенные стратегии, которые протестированы на следующих VPS:
+
+- [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66)
+- [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)
 
 Для внесения изменений в конфиг открываем его в текстовом редакторе:
 
