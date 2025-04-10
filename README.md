@@ -120,8 +120,8 @@ NFQWS_OPT="
 ```
 
 - `--filter-tcp=80` - стратегия для всего HTTP трафика
-- `--filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com` - отдельная стратегия для определенных доменов
-- `--filter-tcp=443` - стратегия для всего HTTPS трафика
+- `--filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com` - стратегия для HTTPS для определенных доменов
+- `--filter-tcp=443` - стратегия для всего остального HTTPS трафика
 - `--filter-udp=443` - стратегия для всего HTTP3 (QUIC) трафика
 
 После внесения изменений не забудьте перезапустить контейнер:
@@ -326,7 +326,7 @@ ss-zapret:
 
 На данный момент проект находится в **очень** сыром состоянии, поэтому я буду рад любой помощи в его улучшении.
 
-Если у вас есть идеи для улучшения скрипта, вы нашли баг или хотите предложить новую функциональность - не стесняйтесь создавать [issue](https://github.com/vernette/ss-zapret/issues) или отправлять [pull request](https://github.com/vernette/ss-zapret/pulls).
+Если у вас есть идеи для улучшения проекта, вы нашли баг или хотите предложить новую функциональность - не стесняйтесь создавать [issue](https://github.com/vernette/ss-zapret/issues) или отправлять [pull request](https://github.com/vernette/ss-zapret/pulls).
 
 ## TODO
 
