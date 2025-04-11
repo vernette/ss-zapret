@@ -34,7 +34,7 @@ sudo pacman -S git
 1. Установить Docker:
 
 ```bash
-bash <(curl -sSL https://get.docker.com)
+bash <(wget -qO- https://get.docker.com)
 ```
 
 2. Клонировать репозиторий и перейти в его директорию:
