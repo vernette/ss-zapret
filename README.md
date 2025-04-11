@@ -103,10 +103,11 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 
 ## Конфигурация
 
-В репозитории находится конфиг, в котором сразу же включены параметры для Discord и настроенные стратегии, которые протестированы на следующих VPS:
+В репозитории находится конфиг, в котором сразу же включены параметры для Discord и настроенные стратегии, которые протестированы на следующих хостингах:
 
 - [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66)
 - [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)
+- [vds.selectel.ru](https://vds.selectel.ru)
 
 Для внесения изменений в конфиг открываем его в текстовом редакторе:
 
