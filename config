@@ -35,7 +35,7 @@ DESYNC_MARK_POSTNAT=0x20000000
 
 NFQWS_ENABLE=1
 NFQWS_PORTS_TCP=80,443
-NFQWS_PORTS_UDP=443
+NFQWS_PORTS_UDP=443,50000-50099
 NFQWS_TCP_PKT_OUT=$((6+$AUTOHOSTLIST_RETRANS_THRESHOLD))
 NFQWS_TCP_PKT_IN=3
 NFQWS_UDP_PKT_OUT=$((6+$AUTOHOSTLIST_RETRANS_THRESHOLD))
@@ -44,6 +44,7 @@ NFQWS_OPT="
 --filter-tcp=80 --methodeol --new
 --filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com,ggpht.com,yting.com,youtubei.googleapis.com --dpi-desync=fakedsplit --dpi-desync-fooling=md5sig --dpi-desync-split-pos=1 --new
 --filter-tcp=443 --dpi-desync=fake --dpi-desync-fooling=badseq --new
+--filter-udp=50000-50099 --filter-l7=discord,stun --dpi-desync=fake --new
 --filter-udp=443 --dpi-desync=fake --dpi-desync-repeats=6
 "
 
