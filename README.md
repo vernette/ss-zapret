@@ -123,6 +123,7 @@ NFQWS_OPT="
 --filter-tcp=80 --methodeol --new
 --filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com --dpi-desync=fakedsplit --dpi-desync-fooling=md5sig --dpi-desync-split-pos=1 --new
 --filter-tcp=443 --dpi-desync=fake --dpi-desync-fooling=badseq --new
+--filter-udp=50000-50099 --filter-l7=discord,stun --dpi-desync=fake --new
 --filter-udp=443 --dpi-desync=fake --dpi-desync-repeats=6
 "
 ```
@@ -130,6 +131,7 @@ NFQWS_OPT="
 - `--filter-tcp=80` - стратегия для всего HTTP трафика
 - `--filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com` - стратегия для HTTPS для определенных доменов
 - `--filter-tcp=443` - стратегия для всего остального HTTPS трафика
+- `--filter-udp=50000-50099 --filter-l7=discord,stun` - стратегия для диапазона портов Discord (zapret >= `70.6`)
 - `--filter-udp=443` - стратегия для всего HTTP3 (QUIC) трафика
 
 После внесения изменений не забудьте перезапустить контейнер:
