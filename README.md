@@ -108,6 +108,7 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 - [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66)
 - [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)
 - [vds.selectel.ru](https://vds.selectel.ru)
+- [Aeza MSK](https://aeza.net/?ref=463603)
 
 Для внесения изменений в конфиг открываем его в текстовом редакторе:
 
