@@ -107,6 +107,7 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 - [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)
 - [vds.selectel.ru MSK](https://vds.selectel.ru)
 - [Aeza MSK](https://aeza.net/?ref=463603)
+- [VDC MSK](https://my.vdc.ru/?affid=191) - промокод `VERNETTE` на скидку в 9%
 
 Для внесения изменений в конфиг открываем его в текстовом редакторе:
 
