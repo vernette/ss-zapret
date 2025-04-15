@@ -1,6 +1,6 @@
 services:
   ss-zapret:
-    image: vernette/ss-zapret:v70.6
+    image: vernette/ss-zapret:latest
     container_name: zapret-proxy
     cap_add:
       - NET_ADMIN
