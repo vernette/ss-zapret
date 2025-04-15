@@ -238,7 +238,7 @@ services:
       - 3x-ui-aio-network
 
   ss-zapret:
-    image: vernette/ss-zapret:v70.5
+    image: vernette/ss-zapret:latest
     container_name: zapret-proxy
     cap_add:
       - NET_ADMIN
