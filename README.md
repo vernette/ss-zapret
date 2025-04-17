@@ -109,6 +109,9 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 - [Aeza MSK](https://aeza.net/?ref=463603)
 - [VDC MSK](https://my.vdc.ru/?affid=191) - промокод `VERNETTE` на скидку в 9%
 
+> [!WARNING]
+> Не везде всё может работать идеально, поэтому при необходимости можно внести изменения в конфиг
+
 Для внесения изменений в конфиг открываем его в текстовом редакторе:
 
 ```bash
@@ -307,7 +310,7 @@ WIP
 ]
 ```
 
-> Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP сервера.
+> Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP сервера или контейнера.
 
 Добавляем нужные правила:
 
@@ -315,7 +318,6 @@ WIP
 "route": {
   "rules": [
     {
-      "inbound": ["tproxy-in"],
       "domain_suffix": ["amnezia.org"],
       "outbound": "ss-zapret-out"
     }
@@ -323,14 +325,56 @@ WIP
 }
 ```
 
-> Тут нужно поменять только `inbound`
-
 </details>
 
 <details>
   <summary>Xray</summary>
 
-WIP
+Добавляем outbound в конфиг:
+
+```json
+"outbounds": [
+  {
+    "tag": "zapret",
+    "protocol": "shadowsocks",
+    "settings": {
+      "servers": [
+        {
+          "address": "127.0.0.1",
+          "port": 8388,
+          "password": "SuperSecurePassword",
+          "method": "chacha20-ietf-poly1305"
+        }
+      ]
+    },
+    "streamSettings": {
+      "network": "tcp",
+      "security": "none",
+      "tcpSettings": {
+        "header": {
+          "type": "none"
+        }
+      }
+    }
+  }
+]
+```
+
+> Обратите внимание на `address`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP сервера или контейнера.
+
+Добавляем нужные правила:
+
+```json
+"routing": {
+  "rules": [
+    {
+      "type": "field",
+      "domain": ["domain:amnezia.org"],
+      "outboundTag": "zapret"
+    }
+  ]
+}
+```
 
 </details>
 
