@@ -292,7 +292,38 @@ WIP
 <details>
   <summary>sing-box</summary>
 
-WIP
+Добавляем outbound в конфиг:
+
+```json
+"outbounds": [
+  {
+    "tag": "ss-zapret-out",
+    "type": "shadowsocks",
+    "server": "127.0.0.1",
+    "server_port": 8388,
+    "method": "chacha20-ietf-poly1305",
+    "password": "SuperSecurePassword"
+  }
+]
+```
+
+> Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP сервера.
+
+Добавляем нужные правила:
+
+```json
+"route": {
+  "rules": [
+    {
+      "inbound": ["tproxy-in"],
+      "domain_suffix": ["amnezia.org"],
+      "outbound": "ss-zapret-out"
+    }
+  ]
+}
+```
+
+> Тут нужно поменять только `inbound`
 
 </details>
 
