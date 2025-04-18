@@ -8,6 +8,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
     ipset \
     iptables \
     ip6tables \
+    netcat-openbsd \
     shadowsocks-libev
 
 WORKDIR /opt
