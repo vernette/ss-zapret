@@ -13,4 +13,9 @@ services:
       - SS_PASSWORD=${SS_PASSWORD}
       - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
       - SS_TIMEOUT=${SS_TIMEOUT}
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "${SS_PORT}"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     restart: unless-stopped
