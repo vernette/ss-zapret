@@ -22,4 +22,4 @@ RUN wget -qO- https://github.com/stunnel/static-curl/releases/download/8.13.0/cu
   rm /usr/bin/SHA256SUMS && \
   chmod +x /usr/bin/curl
 
-CMD ["/bin/sh", "-c", "/opt/zapret/init.d/sysv/zapret start && sleep 3 && exec ss-server -v -s 0.0.0.0 -p ${SS_PORT} -k ${SS_PASSWORD} -m ${SS_ENCRYPT_METHOD} -t ${SS_TIMEOUT} -u"]
+CMD ["/bin/sh", "-c", "/opt/zapret/init.d/sysv/zapret start && exec ss-server -v -s 0.0.0.0 -p ${SS_PORT} -k ${SS_PASSWORD} -m ${SS_ENCRYPT_METHOD} -t ${SS_TIMEOUT} -u"]
