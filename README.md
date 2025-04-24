@@ -11,6 +11,7 @@
 - [Использование](#использование)
 - [Конфигурация](#конфигурация)
 - [Поиск стратегий](#поиск-стратегий)
+- [Работа Instagram в браузере](#работа-instagram-в-браузере)
 - [Интеграция с панелями и прокси-клиентами](#интеграция-с-панелями-и-прокси-клиентами)
 
 ## Использование
@@ -147,6 +148,44 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 
 # Поиск стратегий для HTTPS TLS 1.3, без HTTP, HTTPS TLS 1.2 и HTTP3 (QUIC). Подходит для большинства сайтов и серверов YouTube
 docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IPVS=4 ENABLE_HTTP=0 ENABLE_HTTPS_TLS12=0 ENABLE_HTTPS_TLS13=1 ENABLE_HTTP3=0 REPEATS=8 PARALLEL=1 SCANLEVEL=standard BATCH=1 DOMAINS="xxxxxx.googlevideo.com" /opt/zapret/blockcheck.sh'
+```
+
+## Работа Instagram в браузере
+
+> [!WARNING]
+> Этот пункт выполняется на **удалённом сервере**. Если контейнер работает в локальной сети, то прописывайте IP на роутере или шлюзе
+
+> [!WARNING]
+> Не всегда на клиентах сразу заработает Instagram в браузере, возможно придётся поиграться с DNS
+
+Чаще всего IP Instagram будет заблокирован, поэтому Instagram будет работать только в мобильном приложении.
+
+Чтобы решить эту проблему, нам нужно найти незаблокированный IP и прописать его в `/etc/hosts` на сервере:
+
+```bash
+sudoedit /etc/hosts
+```
+
+Вписываем следующее в самый конец:
+
+```
+незаблокированный_ip instagram.com www.instagram.com
+```
+
+> Например 11.22.33.44 instagram.com www.instagram.com
+
+После этого нам нужно будет установить `systemd-resolved`, чтобы файл `/etc/hosts` читался нашим контейнером, а именно `nslookup` в нём (чтобы при необходимости можно было искать стратегии для Instagram):
+
+```bash
+apt install systemd-resolved
+systemctl enable --now systemd-resolved
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+```
+
+После чего перезапустить контейнер `ss-zapret`, чтобы он увидел новый `/etc/hosts`:
+
+```bash
+docker container restart zapret-proxy
 ```
 
 ## Интеграция с панелями и прокси-клиентами
