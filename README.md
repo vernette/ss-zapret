@@ -70,10 +70,10 @@ nano .env
 docker compose up -d
 ```
 
-5. (опционально) Закрыть порт для внешних подключений:
+5. (опционально) Разрешить подключение только с localhost:
 
 ```bash
-iptables -A DOCKER-USER -p tcp -m tcp --dport 8388 -j DROP
+iptables -I DOCKER-USER -p tcp --dport 8388 ! -s 127.0.0.1 -j DROP
 ```
 
 > Поменяйте порт в команде, если изменяли его в `.env`
