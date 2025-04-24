@@ -81,11 +81,13 @@ iptables -A DOCKER-USER -p tcp -m tcp --dport 8388 -j DROP
 
 В репозитории находится конфиг, в котором сразу же включены параметры для Discord и настроенные стратегии, которые протестированы на следующих хостингах:
 
-- [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66)
-- [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)
-- [vds.selectel.ru MSK](https://vds.selectel.ru)
-- [Aeza MSK](https://aeza.net/?ref=463603)
-- [VDC MSK](https://my.vdc.ru/?affid=191) - промокод `VERNETTE` на скидку в 9%
+| Хостинг                                                                                    | Дата-центр     | Апстрим  |
+| ------------------------------------------------------------------------------------------ | -------------- | -------- |
+| [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66) | M9             | Rascom   |
+| [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)                               | Собственный ДЦ | WestCall |
+| [VDS Selectel MSK](https://vds.selectel.ru)                                                | Selectel       | Rascom   |
+| [Aeza MSK](https://aeza.net/?ref=463603)                                                   | M9             | Rascom   |
+| [VDC MSK](https://my.vdc.ru/?affid=191) - промокод `VERNETTE` на скидку в 9%               | DataCheap, M9  | INETCOM  |
 
 > [!WARNING]
 > Не везде всё может работать идеально, поэтому при необходимости можно внести изменения в конфиг
