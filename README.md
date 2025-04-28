@@ -190,247 +190,114 @@ docker container restart zapret-proxy
 
 ## Интеграция с панелями и прокси-клиентами
 
-<details>
-  <summary>3x-ui</summary>
-
-⚠️ Если 3x-ui запущен на хосте, а не в Docker-контейнере, то не будут работать голосовые сервера в Discord. В остальном отличий от запуска в Docker нет
-
-### Docker, стандартный вариант
-
-Следуем [инструкции по установке](https://github.com/MHSanaei/3x-ui?tab=readme-ov-file#install-with-docker) из оригинального репозитория 3x-ui. После этого панель будет доступна по адресу `http://ip:2053` с логином и паролем `admin:admin` (не забудьте их потом поменять).
-
-Создаём inbound с `VLESS`, если его ещё нет.
-
-Переходим на вкладку `Xray Configs` и добавляем outbound:
-
-![image](https://i.imgur.com/qJ20THK.png)
-
-⚠️ Так как по-умолчанию 3x-ui использует `network_mode: host`, то мы не можем поместить его в одну сеть с нашим контейнером и использовать имя контейнера как hostname вместо IP
-
 Узнаём IP адрес Docker-контейнера с zapret:
 
 ```bash
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' zapret-proxy
 ```
 
-Выбираем протокол `Shadowsocks`, задаём тэг и заполняем параметры. В поле `Address` указываем IP из предыдущего шага:
-
-![image](https://i.imgur.com/IY4N3AK.png)
-
-После чего добавляем outbound кнопкой `Add Outbound`.
-
-Переходим на вкладку `Routing Rules` и добавляем правило:
-
-#### Для любого приходящего трафика
-
-![image](https://i.imgur.com/dKrGz5r.png)
-
-#### Для конкретного inbound
-
-![image](https://i.imgur.com/xgzXhdf.png)
-
-Добавляем правило кнопкой `Add Rule`.
-
-После этого сохраняем настройки и перезапускаем Xray: `Save` -> `Restart Xray`
-
-Теперь весь приходящий в панель трафик будет проходить через наш контейнер. Если требуется обрабатывать отдельные домены - изменяем правило соответствующим образом.
-
-### Docker, интеграция с 3x-ui-aio
-
-[3x-ui-aio](https://github.com/ampetelin/3x-ui-aio) - это проект, который запускает 3x-ui с Angie и автоматическим получением сертификатов для доменов, а также поднимает сайт "заглушку".
-
-Клонируем оба репозитория:
-
-```bash
-git clone https://github.com/ampetelin/3x-ui-aio
-git clone https://github.com/vernette/ss-zapret
-```
-
-Чтобы интегрировать наш контейнер с 3x-ui-aio, нужно внести изменения в файл `docker-compose.yml` от 3x-ui-aio:
-
-```bash
-nano 3x-ui-aio/docker-compose.yml
-```
-
-```yaml
-services:
-  angie:
-    image: docker.angie.software/angie:latest
-    container_name: angie
-    volumes:
-      - $PWD/angie.conf:/etc/angie/angie.conf
-      - $PWD/options-ssl-angie.conf:/etc/angie/options-ssl-angie.conf
-      - 3x-ui-aio-volume:/var/lib/angie/acme/
-    ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
-    restart: unless-stopped
-    networks:
-      - 3x-ui-aio-network
-
-  3x-ui:
-    image: ghcr.io/mhsanaei/3x-ui:latest
-    container_name: 3x-ui
-    volumes:
-      - 3x-ui-aio-volume:/etc/x-ui/
-    environment:
-      XRAY_VMESS_AEAD_FORCED: "false"
-      X_UI_ENABLE_FAIL2BAN: "false"
-    tty: true
-    restart: unless-stopped
-    networks:
-      - 3x-ui-aio-network
-
-  authorization-stub:
-    image: ampetelin/authorization-stub
-    container_name: authorization-stub
-    environment:
-      HOST: "0.0.0.0"
-      PORT: "5000"
-    restart: unless-stopped
-    networks:
-      - 3x-ui-aio-network
-
-  ss-zapret:
-    image: vernette/ss-zapret:latest
-    container_name: zapret-proxy
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "${SS_PORT}:${SS_PORT}"
-    volumes:
-      - ./zapret_config:/opt/zapret/config
-    environment:
-      - SS_PORT=${SS_PORT}
-      - SS_PASSWORD=${SS_PASSWORD}
-      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
-      - SS_TIMEOUT=${SS_TIMEOUT}
-    restart: unless-stopped
-    networks:
-      - 3x-ui-aio-network
-
-networks:
-  3x-ui-aio-network:
-    name: 3x-ui-aio-network
-
-volumes:
-  3x-ui-aio-volume:
-    name: 3x-ui-aio-volume
-```
-
-Тут мы добавляем `ss-zapret` в сеть `3x-ui-aio-network` и меняем название конфига zapret в `volumes`.
-
-Создаём или копируем файл `.env`, а также копируем конфиг zapret из `ss-zapret` в директорию с `3x-ui-aio`:
-
-```bash
-cp ss-zapret/.env.example 3x-ui-aio/.env # или если он уже есть - cp ss-zapret/.env 3x-ui-aio/.env
-cp ss-zapret/config 3x-ui-aio/zapret_config
-```
-
-Далее следуем инструкции из 3x-ui-aio. Когда панель будет доступна, то добавляем outbound следующим образом:
-
-![image](https://i.imgur.com/WlLDl9d.png)
-
-Настройка правил не отличается от инструкции выше.
-
-</details>
-
-<details>
-  <summary>Marzban</summary>
-
-WIP
-
-</details>
-
 <details>
   <summary>sing-box</summary>
 
-Добавляем outbound в конфиг:
-
-```json
-"outbounds": [
-  {
-    "tag": "ss-zapret-out",
-    "type": "shadowsocks",
-    "server": "127.0.0.1",
-    "server_port": 8388,
-    "method": "chacha20-ietf-poly1305",
-    "password": "SuperSecurePassword"
-  }
-]
-```
-
-> Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP сервера или контейнера.
-
-Добавляем нужные правила:
-
-```json
-"route": {
-  "rules": [
+  Добавляем outbound в конфиг:
+  
+  ```json
+  "outbounds": [
     {
-      "domain_suffix": ["amnezia.org"],
-      "outbound": "ss-zapret-out"
+      "tag": "ss-zapret-out",
+      "type": "shadowsocks",
+      "server": "127.0.0.1",
+      "server_port": 8388,
+      "method": "chacha20-ietf-poly1305",
+      "password": "SuperSecurePassword"
     }
   ]
-}
-```
-
+  ```
+  
+  > Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP устройства, на котором запущен контейнер
+  
+  Добавляем нужные правила:
+  
+  ```json
+  "route": {
+    "rules": [
+      {
+        "network": "udp",
+        "port": 443,
+        "port_range": "50000-50099",
+        "outbound": "ss-zapret-out"
+      },
+      {
+        "network": "tcp",
+        "outbound": "ss-zapret-out"
+      }
+    ]
+  }
+  ```
 </details>
 
 <details>
   <summary>Xray</summary>
 
-Добавляем outbound в конфиг:
-
-```json
-"outbounds": [
-  {
-    "tag": "zapret",
-    "protocol": "shadowsocks",
-    "settings": {
-      "servers": [
-        {
-          "address": "127.0.0.1",
-          "port": 8388,
-          "password": "SuperSecurePassword",
-          "method": "chacha20-ietf-poly1305"
-        }
-      ]
-    },
-    "streamSettings": {
-      "network": "tcp",
-      "security": "none",
-      "tcpSettings": {
-        "header": {
-          "type": "none"
+  Добавляем outbound в конфиг:
+  
+  ```json
+  "outbounds": [
+    {
+      "tag": "zapret",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "127.0.0.1",
+            "port": 8388,
+            "password": "SuperSecurePassword",
+            "method": "chacha20-ietf-poly1305"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "none",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
         }
       }
     }
-  }
-]
-```
-
-> Обратите внимание на `address`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP сервера или контейнера.
-
-Добавляем нужные правила:
-
-```json
-"routing": {
-  "rules": [
-    {
-      "type": "field",
-      "domain": ["domain:amnezia.org"],
-      "outboundTag": "zapret"
-    }
   ]
-}
-```
+  ```
+  
+  > Обратите внимание на `address`: если контейнер и Xray запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP устройства, на котором запущен контейнер
 
+  Добавляем нужные правила:
+  
+  ```json
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "network": "UDP",
+        "port": "443,50000-50099",
+        "outboundTag": "zapret"
+      },
+      {
+        "type": "field",
+        "network": "TCP",
+        "outboundTag": "zapret"
+      }
+    ]
+  }
+  ```
 </details>
 
 ## Итог
 
-Мы получаем крохотный (~30 МБ) Docker-контейнер с zapret и запущенным Shadowsocks.
+Мы получаем крохотный (~30 МБ) Docker-контейнер с zapret и запущенным Shadowsocks для **локального подключения** к контейнеру.
+
+> [!IMPORTANT]
+> Не используйте Shadowsocks напрямую, так как он детектируется и блокируется
 
 Он может работать:
 
