@@ -1,22 +1,35 @@
-> [!WARNING]
-> Как и оригинальный проект, этот также не стремится быть "волшебной таблеткой", а лишь является удобным инструментом для развёртывания zapret в Docker
+![Docker Size](https://img.shields.io/badge/размер_образа-~30MB-blue)
+![Tested](https://img.shields.io/badge/протестирован_на-RocketCloud-green)
 
-[zapret от bol-van](https://github.com/bol-van/zapret), собранный в Docker-контейнер c Shadowsocks для подключения к контейнеру.
+Docker-контейнер на основе [zapret от bol-van](https://github.com/bol-van/zapret) с интегрированным Shadowsocks для подключения к контейнеру. Предназначен для удобной маршрутизации трафика через изолированную среду без модификации основной сети.
 
-Изначально предназначался для маршрутизации в него доменов/подсетей Discord из sing-box и модификации очереди `nfqueue` в режиме `nfqws`, чтобы не затрагивать основную сеть.
+Этот проект предоставляет готовое решение для запуска zapret в изолированной Docker-среде с возможностью подключения через Shadowsocks.
+
+- Компактный размер (~30 МБ)
+- Изоляция zapret в отдельном контейнере
+- Простая интеграция с sing-box, Xray и другими прокси-клиентами
+- Удобное управление трафиком определенных доменов/сервисов
 
 > [!CAUTION]
-> Работа контейнера гарантируется **только на Linux**. Точно не работает на Windows и скорее всего на macOS (не тестировалось)
+> Контейнер работает только на Linux. Не совместим с Windows и macOS
 
-- [Использование](#использование)
+## Содержание
+
+- [Быстрый старт](#быстрый-старт)
+  - [Предварительные требования](#предварительные-требования)
+  - [Установка и запуск](#установка-и-запуск)
 - [Конфигурация](#конфигурация)
-- [Поиск стратегий](#поиск-стратегий)
+- [Расширенные возможности](#расширенные-возможности)
+  - [Поиск стратегий](#поиск-стратегий)
+  - [Интеграция с прокси-клиентами](#интеграция-с-прокси-клиентами)
 - [Работа Instagram в браузере](#работа-instagram-в-браузере)
-- [Интеграция с панелями и прокси-клиентами](#интеграция-с-панелями-и-прокси-клиентами)
+- [Предупреждение про Shadowsocks](#предупреждение-про-shadowsocks)
 
-## Использование
+## Быстрый старт
 
-0. Установить git:
+### Предварительные требования
+
+1. Установка git:
 
 ```bash
 # Ubuntu/Debian
@@ -29,58 +42,52 @@ sudo dnf install git
 sudo pacman -S git
 ```
 
-1. Установить Docker:
+2. Установка Docker:
 
 ```bash
 bash <(wget -qO- https://get.docker.com)
 ```
 
-2. Клонировать репозиторий и перейти в его директорию:
+### Установка и запуск
+
+1. Клонируйте репозиторий:
 
 ```bash
 git clone https://github.com/vernette/ss-zapret
 cd ss-zapret
 ```
 
-> [!WARNING]
-> Далее все команды нужно запускать из директории проекта - `ss-zapret`
-
-3. Cоздать `.env` файл. За основу можно взять `.env.example`:
-
-```env
-SS_PORT=8388
-SS_PASSWORD=SuperSecurePassword
-SS_ENCRYPT_METHOD=chacha20-ietf-poly1305
-SS_TIMEOUT=300
-```
-
-И отредактировать его:
+2. Cоздайте `.env` файл. За основу можно взять `.env.example`:
 
 ```bash
 cp .env.example .env
 nano .env
 ```
 
-> [!WARNING]
-> **ВАЖНО:** Смените стандартный пароль для Shadowsocks и, при необходимости, другие переменные окружения
+Пример содержимого `.env`:
 
-4. Запустить контейнер:
+```env
+SS_PORT=8388                                # Порт Shadowsocks
+SS_PASSWORD=SuperSecurePassword             # Пароль (рекомендуется изменить!)
+SS_ENCRYPT_METHOD=chacha20-ietf-poly1305    # Метод шифрования
+SS_TIMEOUT=300                              # Таймаут подключения
+```
+
+3. Запустите контейнер:
 
 ```bash
 docker compose up -d
 ```
 
-5. (опционально) Разрешить подключение только с localhost:
+4. (Опционально) Ограничьте доступ только с localhost, если контейнер работает на публичном сервере:
 
 ```bash
 iptables -I DOCKER-USER -p tcp --dport 8388 ! -s 127.0.0.1 -j DROP
 ```
 
-> Поменяйте порт в команде, если изменяли его в `.env`
-
 ## Конфигурация
 
-В репозитории находится конфиг, в котором сразу же включены параметры для Discord и настроенные стратегии, которые протестированы на следующих хостингах:
+В репозитории находится конфиг, в котором включены параметры для Discord и настроенные стратегии, которые протестированы на следующих хостингах:
 
 | Хостинг                                                                                    | Дата-центр     | Апстрим  |
 | ------------------------------------------------------------------------------------------ | -------------- | -------- |
@@ -114,7 +121,7 @@ NFQWS_OPT="
 - `--filter-tcp=80` - стратегия для всего HTTP трафика
 - `--filter-tcp=443 --hostlist-domains=youtube.com,googlevideo.com` - стратегия для HTTPS для определенных доменов
 - `--filter-tcp=443` - стратегия для всего остального HTTPS трафика
-- `--filter-udp=50000-50099 --filter-l7=discord,stun` - стратегия для диапазона портов Discord (zapret >= `70.6`)
+- `--filter-udp=50000-50099 --filter-l7=discord,stun` - стратегия для диапазона портов Discord (с версии zapret >= 70.6)
 - `--filter-udp=443` - стратегия для всего HTTP3 (QUIC) трафика
 
 После внесения изменений не забудьте перезапустить контейнер:
@@ -123,9 +130,11 @@ NFQWS_OPT="
 docker compose restart
 ```
 
-## Поиск стратегий
+## Расширенные возможности
 
-Поиск стратегий ничем не отличается от поиска в оригинальном zapret и осуществляется скриптом `blockcheck.sh`. Этот скрипт подбирает оптимальную стратегию на основе особенностей вашего провайдера:
+### Поиск стратегий
+
+Поиск стратегий осуществляется скриптом `blockcheck.sh`. Этот скрипт подбирает оптимальные стратегии для вашего домашнего/хостинг провайдера:
 
 ```bash
 docker compose exec ss-zapret sh /opt/zapret/blockcheck.sh
@@ -140,15 +149,105 @@ docker compose exec ss-zapret sh /opt/zapret/blockcheck.sh
 docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 REPEATS=8 DOMAINS="amnezia.org discord.com" /opt/zapret/blockcheck.sh'
 ```
 
-Парочка примеров под разные сценарии:
+#### Поиск стратегий для HTTP, HTTPS TLS 1.2, без HTTPS TLS 1.3 и HTTP3 (QUIC). Подходит для сайтов, которые не поддерживают TLS 1.3 (таких мало, но они есть)
 
 ```bash
-# Поиск стратегий для HTTP, HTTPS TLS 1.2, без HTTPS TLS 1.3 и HTTP3 (QUIC). Подходит для сайтов, которые не поддерживают TLS 1.3 (таких мало, но они есть)
 docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IPVS=4 ENABLE_HTTP=1 ENABLE_HTTPS_TLS12=1 ENABLE_HTTPS_TLS13=0 ENABLE_HTTP3=0 REPEATS=8 PARALLEL=1 SCANLEVEL=standard BATCH=1 DOMAINS="amnezia.org discord.com" /opt/zapret/blockcheck.sh'
+```
 
-# Поиск стратегий для HTTPS TLS 1.3, без HTTP, HTTPS TLS 1.2 и HTTP3 (QUIC). Подходит для большинства сайтов и серверов YouTube
+#### Поиск стратегий для HTTPS TLS 1.3, без HTTP, HTTPS TLS 1.2 и HTTP3 (QUIC). Подходит для большинства сайтов и серверов YouTube
+
+```bash
 docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IPVS=4 ENABLE_HTTP=0 ENABLE_HTTPS_TLS12=0 ENABLE_HTTPS_TLS13=1 ENABLE_HTTP3=0 REPEATS=8 PARALLEL=1 SCANLEVEL=standard BATCH=1 DOMAINS="xxxxxx.googlevideo.com" /opt/zapret/blockcheck.sh'
 ```
+
+### Интеграция с прокси-клиентами
+
+#### Получение IP адреса контейнера
+
+```bash
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' zapret-proxy
+```
+
+#### Интеграция с sing-box
+
+```json
+"outbounds": [
+  {
+    "tag": "ss-zapret-out",
+    "type": "shadowsocks",
+    "server": "127.0.0.1",
+    "server_port": 8388,
+    "method": "chacha20-ietf-poly1305",
+    "password": "SuperSecurePassword"
+  }
+],
+"route": {
+  "rules": [
+    {
+      "network": "udp",
+      "port": 443,
+      "port_range": "50000-50099",
+      "outbound": "ss-zapret-out"
+    },
+    {
+      "network": "tcp",
+      "outbound": "ss-zapret-out"
+    }
+  ]
+}
+```
+
+> [!IMPORTANT]
+> Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP устройства, на котором запущен контейнер. Если используется панель, то нужно указывать IP контейнера для корректной работы UDP трафика
+
+#### Интеграция с Xray
+
+```json
+"outbounds": [
+  {
+    "tag": "zapret",
+    "protocol": "shadowsocks",
+    "settings": {
+      "servers": [
+        {
+          "address": "127.0.0.1",
+          "port": 8388,
+          "password": "SuperSecurePassword",
+          "method": "chacha20-ietf-poly1305"
+        }
+      ]
+    },
+    "streamSettings": {
+      "network": "tcp",
+      "security": "none",
+      "tcpSettings": {
+        "header": {
+          "type": "none"
+        }
+      }
+    }
+  }
+],
+"routing": {
+  "rules": [
+    {
+      "type": "field",
+      "network": "UDP",
+      "port": "443,50000-50099",
+      "outboundTag": "zapret"
+    },
+    {
+      "type": "field",
+      "network": "TCP",
+      "outboundTag": "zapret"
+    }
+  ]
+}
+```
+
+> [!IMPORTANT]
+> Обратите внимание на `address`: если контейнер и Xray запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP устройства, на котором запущен контейнер. Если используется панель, то нужно указывать IP контейнера для корректной работы UDP трафика
 
 ## Работа Instagram в браузере
 
@@ -158,7 +257,7 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 > [!WARNING]
 > Не всегда на клиентах сразу заработает Instagram в браузере, возможно придётся поиграться с DNS
 
-Чаще всего IP Instagram будет заблокирован, поэтому Instagram будет работать только в мобильном приложении.
+Чаще всего IP Instagram будет заблокирован и он будет работать только в мобильном приложении.
 
 Чтобы решить эту проблему, нам нужно найти незаблокированный IP и прописать его в `/etc/hosts` на сервере:
 
@@ -174,7 +273,7 @@ sudoedit /etc/hosts
 
 > Например 11.22.33.44 instagram.com www.instagram.com
 
-После этого нам нужно будет установить `systemd-resolved`, чтобы файл `/etc/hosts` читался нашим контейнером, а именно `nslookup` в нём (чтобы при необходимости можно было искать стратегии для Instagram):
+После этого нам нужно будет установить `systemd-resolved`, чтобы файл `/etc/hosts` читался нашим контейнером и при необходимости можно было искать стратегии для Instagram:
 
 ```bash
 apt install systemd-resolved
@@ -188,148 +287,31 @@ ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 docker container restart zapret-proxy
 ```
 
-## Интеграция с панелями и прокси-клиентами
+## Сценарии использования
 
-Узнаём IP адрес Docker-контейнера с zapret:
-
-```bash
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' zapret-proxy
-```
-
-<details>
-  <summary>sing-box</summary>
-
-  Добавляем outbound в конфиг:
-  
-  ```json
-  "outbounds": [
-    {
-      "tag": "ss-zapret-out",
-      "type": "shadowsocks",
-      "server": "127.0.0.1",
-      "server_port": 8388,
-      "method": "chacha20-ietf-poly1305",
-      "password": "SuperSecurePassword"
-    }
-  ]
-  ```
-  
-  > Обратите внимание на `server`: если контейнер и sing-box запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP устройства, на котором запущен контейнер
-  
-  Добавляем нужные правила:
-  
-  ```json
-  "route": {
-    "rules": [
-      {
-        "network": "udp",
-        "port": 443,
-        "port_range": "50000-50099",
-        "outbound": "ss-zapret-out"
-      },
-      {
-        "network": "tcp",
-        "outbound": "ss-zapret-out"
-      }
-    ]
-  }
-  ```
-</details>
-
-<details>
-  <summary>Xray</summary>
-
-  Добавляем outbound в конфиг:
-  
-  ```json
-  "outbounds": [
-    {
-      "tag": "zapret",
-      "protocol": "shadowsocks",
-      "settings": {
-        "servers": [
-          {
-            "address": "127.0.0.1",
-            "port": 8388,
-            "password": "SuperSecurePassword",
-            "method": "chacha20-ietf-poly1305"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "none",
-        "tcpSettings": {
-          "header": {
-            "type": "none"
-          }
-        }
-      }
-    }
-  ]
-  ```
-  
-  > Обратите внимание на `address`: если контейнер и Xray запущены на одном хосте - то указываем `127.0.0.1`, иначе указываем IP устройства, на котором запущен контейнер
-
-  Добавляем нужные правила:
-  
-  ```json
-  "routing": {
-    "rules": [
-      {
-        "type": "field",
-        "network": "UDP",
-        "port": "443,50000-50099",
-        "outboundTag": "zapret"
-      },
-      {
-        "type": "field",
-        "network": "TCP",
-        "outboundTag": "zapret"
-      }
-    ]
-  }
-  ```
-</details>
-
-## Итог
-
-Мы получаем крохотный (~30 МБ) Docker-контейнер с zapret и запущенным Shadowsocks для **локального подключения** к контейнеру.
-
-> [!IMPORTANT]
-> Не используйте Shadowsocks напрямую, так как он детектируется и блокируется
-
-Он может работать:
-
-- на домашнем сервере - изолированно, чтобы не затрагивать основную сеть
-- в облаке - как единая точка входа
-
-Контейнер удобно использовать для прокидывания определённых доменов/сервисов через sing-box, Xray, другие прокси-клиенты или панели, или же для маршрутизации в него всего трафика.
+- **Локальное использование**: Запуск контейнера на домашнем сервере для изолированной работы zapret без модификации основной сети
+- **Серверное использование**: Развертывание на удалённом VPS как единая точка подключения
 
 ## Разработка
 
-Чтобы собрать образ с другой версией zapret, укажите нужный тег при сборке:
+Сборка образа с другой версией zapret:
 
 ```bash
 docker build -t ss-zapret:v70.5 --build-arg ZAPRET_TAG=v70.5 .
 ```
 
-После чего отредактируйте `docker-compose.yml`:
+Затем отредактируйте `docker-compose.yml`:
 
 ```yaml
-...
 ss-zapret:
   image: ss-zapret:v70.5
-...
 ```
 
 ## Вклад в разработку
 
-На данный момент проект находится в **очень** сыром состоянии, поэтому я буду рад любой помощи в его улучшении.
-
 Если у вас есть идеи для улучшения проекта, вы нашли баг или хотите предложить новую функциональность - не стесняйтесь создавать [issue](https://github.com/vernette/ss-zapret/issues) или отправлять [pull request](https://github.com/vernette/ss-zapret/pulls).
 
-## TODO
+## Предупреждение про Shadowsocks
 
-- [ ] Добавить примеры подключения к контейнеру
-- [x] Обновить zapret до версии 70.6
+> [!IMPORTANT]
+> Shadowsocks предназначен только для подключения в **локальной** сети. Не рекомендуется использовать его для внешнего подключения
