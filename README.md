@@ -89,13 +89,14 @@ iptables -I DOCKER-USER -p tcp --dport 8388 ! -s 127.0.0.1 -j DROP
 
 В репозитории находится конфиг, в котором включены параметры для Discord и настроенные стратегии, которые протестированы на следующих хостингах:
 
-| Хостинг                                                                                    | Дата-центр     | Апстрим  |
-| ------------------------------------------------------------------------------------------ | -------------- | -------- |
-| [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66) | M9             | Rascom   |
-| [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)                               | Собственный ДЦ | WestCall |
-| [VDS Selectel MSK](https://vds.selectel.ru)                                                | Selectel       | Rascom   |
-| [Aeza MSK](https://aeza.net/?ref=463603)                                                   | M9             | Rascom   |
-| [VDC MSK](https://my.vdc.ru/?affid=191) - промокод `VERNETTE` на скидку в 9%               | DataCheap, M9  | INETCOM  |
+| Хостинг                                                                                    | Дата-центр               | Апстрим  |
+| ------------------------------------------------------------------------------------------ | ------------------------ | -------- |
+| [RocketCloud](https://rocketcloud.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66) | M9                       | Rascom   |
+| [HSVDS](https://hsvds.ru/signup/?refid=20241026-9939487-843)                               | Собственный ДЦ           | WestCall |
+| [VDS Selectel MSK](https://vds.selectel.ru)                                                | Selectel                 | Rascom   |
+| [Aeza MSK](https://aeza.net/?ref=463603)                                                   | M9                       | Rascom   |
+| [VDC MSK](https://my.vdc.ru/?affid=191) - промокод `VERNETTE` на скидку в 9%               | DataCheap, M9            | INETCOM  |
+| [RUVDS MSK](https://ruvds.com)                                                             | Собственный ДЦ (Rucloud) | RETN     |
 
 > [!WARNING]
 > Не везде всё может работать идеально, поэтому при необходимости можно внести изменения в конфиг
