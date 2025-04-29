@@ -15,6 +15,7 @@ FROM alpine:3.21
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     apk add --no-cache \
+    ipset \
     iptables \
     ip6tables \
     netcat-openbsd \
