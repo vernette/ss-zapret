@@ -1,3 +1,4 @@
+![Docker Pulls](https://img.shields.io/docker/pulls/vernette/ss-zapret)
 ![Docker Size](https://img.shields.io/badge/размер_образа-~30MB-blue)
 ![Tested](https://img.shields.io/badge/протестирован_на-RocketCloud-green)
 
