@@ -188,7 +188,7 @@ docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' zapr
     {
       "network": "udp",
       "port": 443,
-      "port_range": "50000-50099",
+      "port_range": "50000:50099",
       "outbound": "ss-zapret-out"
     },
     {
