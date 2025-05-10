@@ -25,5 +25,8 @@ WORKDIR /opt
 
 COPY --from=build /opt/zapret /opt/zapret
 COPY --from=build /opt/curl /usr/bin/curl
+COPY entrypoint.sh /opt/entrypoint.sh
 
-CMD ["/bin/sh", "-c", "/opt/zapret/init.d/sysv/zapret start && exec ss-server -v -s 0.0.0.0 -p ${SS_PORT} -k ${SS_PASSWORD} -m ${SS_ENCRYPT_METHOD} -t ${SS_TIMEOUT} -u"]
+RUN chmod +x /opt/entrypoint.sh
+
+ENTRYPOINT ["/opt/entrypoint.sh"]
