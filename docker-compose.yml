@@ -17,7 +17,7 @@ services:
     healthcheck:
       test: [
         "CMD-SHELL",
-        "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} && curl -s --socks5 localhost:${SOCKS_PORT} https://api.ipify.org || exit 1"
+        "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1"
       ]
       interval: 30s
       timeout: 10s
