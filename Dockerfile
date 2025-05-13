@@ -1,6 +1,7 @@
 FROM alpine:3.21 AS build
 
-ARG ZAPRET_TAG
+ARG ZAPRET_TAG=v70.6
+ARG CURL_VERSION=8.13.0
 
 WORKDIR /opt
 
@@ -8,7 +9,7 @@ RUN wget -qO- "https://github.com/bol-van/zapret/releases/download/${ZAPRET_TAG}
     mv zapret-* zapret && \
     /opt/zapret/install_bin.sh
 
-RUN wget -qO- https://github.com/stunnel/static-curl/releases/download/8.13.0/curl-linux-x86_64-glibc-8.13.0.tar.xz | tar -xJf - -C /opt && \
+RUN wget -qO- "https://github.com/stunnel/static-curl/releases/download/${CURL_VERSION}/curl-linux-x86_64-glibc-${CURL_VERSION}.tar.xz" | tar -xJf - -C /opt && \
     chmod +x /opt/curl
 
 FROM alpine:3.21
