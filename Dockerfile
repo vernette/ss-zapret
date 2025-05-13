@@ -1,7 +1,11 @@
-FROM alpine:3.21 AS build
-
+ARG ALPINE_VERSION=3.21
 ARG ZAPRET_TAG=v70.6
 ARG CURL_VERSION=8.13.0
+
+FROM alpine:${ALPINE_VERSION} AS build
+
+ARG ZAPRET_TAG
+ARG CURL_VERSION
 
 WORKDIR /opt
 
@@ -12,7 +16,7 @@ RUN wget -qO- "https://github.com/bol-van/zapret/releases/download/${ZAPRET_TAG}
 RUN wget -qO- "https://github.com/stunnel/static-curl/releases/download/${CURL_VERSION}/curl-linux-x86_64-glibc-${CURL_VERSION}.tar.xz" | tar -xJf - -C /opt && \
     chmod +x /opt/curl
 
-FROM alpine:3.21
+FROM alpine:${ALPINE_VERSION}
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     apk add --no-cache \
