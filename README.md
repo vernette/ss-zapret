@@ -60,7 +60,13 @@ git clone https://github.com/vernette/ss-zapret
 cd ss-zapret
 ```
 
-2. Cоздайте `.env` файл. За основу можно взять `.env.example`:
+2. Скопируйте стандартный конфиг zapret:
+
+```bash
+cp config.default config
+```
+
+3. Cоздайте `.env` файл. За основу можно взять `.env.example`:
 
 ```bash
 cp .env.example .env
@@ -77,13 +83,13 @@ SS_ENCRYPT_METHOD=chacha20-ietf-poly1305    # Метод шифрования
 SS_TIMEOUT=300                              # Таймаут подключения
 ```
 
-3. Запустите контейнер:
+4. Запустите контейнер:
 
 ```bash
 docker compose up -d
 ```
 
-4. (Опционально) Ограничьте доступ к портам только с localhost, если контейнер работает на публичном сервере:
+5. (Опционально) Ограничьте доступ к портам только с localhost, если контейнер работает на публичном сервере:
 
 ```bash
 iptables -I DOCKER-USER -p tcp --dport 8388 ! -s 127.0.0.1 -j DROP
