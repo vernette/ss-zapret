@@ -25,6 +25,7 @@ Docker-контейнер на основе [zapret от bol-van](https://github
   - [Интеграция с прокси-клиентами](#интеграция-с-прокси-клиентами)
     - [sing-box](#интеграция-с-sing-box)
     - [Xray](#интеграция-с-xray)
+    - [Интеграция в существующий проект](#интеграция-в-существующий-проект)
 - [Работа Instagram в браузере](#работа-instagram-в-браузере)
 - [Предупреждение про Shadowsocks и SOCKS5](#предупреждение-про-shadowsocks-и-socks5)
 
@@ -335,6 +336,128 @@ docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' zapr
 
 > [!IMPORTANT]
 > Обратите внимание на `address`: При обычном использовании указываем IP устройства, на котором запущен контейнер. Если используется панель, то нужно указывать [IP контейнера](#получение-ip-адреса-контейнера) или поместить контейнер в одну сеть с панелью и обращаться к нему по названию сервиса (`ss-zapret`) для корректной работы UDP трафика
+
+#### Интеграция в существующий проект
+
+Вы можете интегрировать контейнер `ss-zapret` в существующий проект, например, с Xray или sing-box. Это позволит использовать имя сервиса вместо IP-адреса в конфигурации.
+
+1. Клонируйте основной репозиторий:
+
+```bash
+git clone https://github.com/vernette/ss-zapret
+cd ss-zapret
+```
+
+2. Скопируйте `config.default` в директорию вашего проекта:
+
+```bash
+cp config.default /path/to/your/project/zapret_config
+```
+
+3. Добавьте переменные окружения напрямую в `docker-compose.yml` вашего проекта или скопируйте `.env.example`:
+
+```bash
+cp .env.example /path/to/your/project/.env
+```
+
+4. Добавьте сервис `ss-zapret` в ваш `docker-compose.yml`:
+
+```yaml
+services:
+  ss-zapret:
+    image: vernette/ss-zapret:latest
+    restart: always
+    environment:
+      - SS_PORT=${SS_PORT}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT}
+    volumes:
+      - ./zapret_config:/opt/zapret/config
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2s
+    cap_add:
+      - NET_ADMIN
+```
+
+Пример из другого моего репозитория - [steal-oneself-examples](https://github.com/vernette/steal-oneself-examples):
+
+```yaml
+services:
+  caddy:
+    image: caddy:2.9
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./caddy/data:/data
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/templates:/srv
+
+  xray:
+    image: ghcr.io/xtls/xray-core:25.1.1
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - ./xray:/etc/xray
+      - ./xray_data:/usr/local/share/xray
+    depends_on:
+      ss-zapret:
+        condition: service_healthy
+
+  ss-zapret:
+    image: vernette/ss-zapret:latest
+    restart: always
+    environment:
+      - SS_PORT=${SS_PORT}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT}
+    volumes:
+      - ./zapret_config:/opt/zapret/config
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2s
+    cap_add:
+      - NET_ADMIN
+```
+
+5. В конфигурации Xray или sing-box используйте имя сервиса `ss-zapret` вместо IP-адреса:
+
+```json
+{
+  "outbounds": [
+    {
+      "tag": "ss-zapret-out",
+      "type": "shadowsocks",
+      "server": "ss-zapret", // Используем имя сервиса
+      "server_port": 8388,
+      "method": "chacha20-ietf-poly1305",
+      "password": "SuperSecurePassword"
+    }
+  ]
+}
+```
+
+Это позволит Docker автоматически разрешать имя сервиса в IP-адрес контейнера.
 
 ## Работа Instagram в браузере
 
