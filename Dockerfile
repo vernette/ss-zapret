@@ -6,6 +6,7 @@ FROM alpine:${ALPINE_VERSION} AS build
 
 ARG ZAPRET_TAG
 ARG CURL_VERSION
+ARG TARGETPLATFORM
 
 WORKDIR /opt
 
@@ -13,7 +14,12 @@ RUN wget -qO- "https://github.com/bol-van/zapret/releases/download/${ZAPRET_TAG}
     mv zapret-* zapret && \
     /opt/zapret/install_bin.sh
 
-RUN wget -qO- "https://github.com/stunnel/static-curl/releases/download/${CURL_VERSION}/curl-linux-x86_64-glibc-${CURL_VERSION}.tar.xz" | tar -xJf - -C /opt && \
+RUN case "$TARGETPLATFORM" in \
+      "linux/amd64") ARCH="x86_64" ;; \
+      "linux/arm64") ARCH="aarch64" ;; \
+      *) echo "Unsupported platform: $TARGETPLATFORM" && exit 1 ;; \
+    esac && \
+    wget -qO- "https://github.com/stunnel/static-curl/releases/download/${CURL_VERSION}/curl-linux-${ARCH}-glibc-${CURL_VERSION}.tar.xz" | tar -xJf - -C /opt && \
     chmod +x /opt/curl
 
 FROM alpine:${ALPINE_VERSION}
