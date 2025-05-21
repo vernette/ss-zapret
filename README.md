@@ -486,9 +486,7 @@ sudoedit /etc/hosts
 После этого нам нужно будет установить `systemd-resolved`, чтобы файл `/etc/hosts` читался нашим контейнером и при необходимости можно было искать стратегии для Instagram:
 
 ```bash
-apt install systemd-resolved
-systemctl enable --now systemd-resolved
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+sudo apt install systemd-resolved
 ```
 
 После чего перезапустить контейнер `ss-zapret`, чтобы он увидел новый `/etc/hosts`:
