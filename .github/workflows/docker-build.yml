@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "Dockerfile"
+      - "entrypoint.sh"
   workflow_dispatch:
 
 jobs:
