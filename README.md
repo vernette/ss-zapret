@@ -84,6 +84,20 @@ SS_ENCRYPT_METHOD=chacha20-ietf-poly1305    # Метод шифрования
 SS_TIMEOUT=300                              # Таймаут подключения
 ```
 
+> [!NOTE]
+> Необязательно использовать `.env` файл. Вы можете задать переменные окружения вручную прямо в `docker-compose.yml`
+
+Список переменных окружения в `docker-compose.yml`:
+
+| Переменная                                  | Описание                                                                                               |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| SS_PORT: `8388`                             | Порт Shadowsocks                                                                                       |
+| SOCKS_PORT: `1080`                          | Порт SOCKS5                                                                                            |
+| SS_PASSWORD: `SuperSecurePassword`          | Пароль для Shadowsocks                                                                                 |
+| SS_ENCRYPT_METHOD: `chacha20-ietf-poly1305` | Метод шифрования Shadowsocks                                                                           |
+| SS_TIMEOUT: `300`                           | Таймаут сокета Shadowsocks в секундах                                                                              |
+| SS_VERBOSE: `0`, `1`                        | Логгирование Shadowsocks. Если переменная не установлена или равна `1`, то по-умолчанию будет включено |
+
 4. Запустите контейнер:
 
 ```bash
@@ -369,10 +383,11 @@ services:
     restart: always
     environment:
       - SS_PORT=${SS_PORT}
+      - SOCKS_PORT=${SOCKS_PORT}
       - SS_PASSWORD=${SS_PASSWORD}
       - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
       - SS_TIMEOUT=${SS_TIMEOUT}
-      - SOCKS_PORT=${SOCKS_PORT}
+      - SS_VERBOSE=1
     volumes:
       - ./zapret_config:/opt/zapret/config
     healthcheck:
