@@ -11,8 +11,8 @@ services:
       - SOCKS_PORT=${SOCKS_PORT}
       - SS_VERBOSE=1
     ports:
-      - "${SS_PORT}:${SS_PORT}"
-      - "${SOCKS_PORT}:${SOCKS_PORT}"
+      - "127.0.0.1:${SS_PORT}:${SS_PORT}"
+      - "127.0.0.1:${SOCKS_PORT}:${SOCKS_PORT}"
     volumes:
       - ./config:/opt/zapret/config
     healthcheck:
