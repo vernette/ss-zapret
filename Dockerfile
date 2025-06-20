@@ -32,6 +32,8 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
     netcat-openbsd \
     shadowsocks-libev
 
+EXPOSE 1080 8388
+
 WORKDIR /opt
 
 COPY --from=build /opt/zapret /opt/zapret
