@@ -1,4 +1,4 @@
-![Zapret Version](https://img.shields.io/badge/zapret-v71.1.1-red)
+![Zapret Version](https://img.shields.io/badge/zapret-v71.2-red)
 ![Docker Pulls](https://img.shields.io/docker/pulls/vernette/ss-zapret)
 ![Docker Size](https://img.shields.io/badge/размер_образа-~30MB-blue)
 ![Tested](https://img.shields.io/badge/протестирован_на-RocketCloud-green)
