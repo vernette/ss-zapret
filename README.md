@@ -1,16 +1,10 @@
 ![Zapret Version](https://img.shields.io/badge/zapret-v71.2-red)
-![Docker Pulls](https://img.shields.io/docker/pulls/vernette/ss-zapret)
-![Docker Size](https://img.shields.io/badge/размер_образа-~30MB-blue)
-![Tested](https://img.shields.io/badge/протестирован_на-RocketCloud-green)
+![Docker Pulls](https://img.shields.io/docker/pulls/vernette/ss-zapret?logo=docker)
 
 Docker-контейнер на основе [zapret от bol-van](https://github.com/bol-van/zapret) с интегрированным Shadowsocks и SOCKS5 для подключения к контейнеру. Предназначен для удобной маршрутизации трафика через изолированную среду без модификации основной сети.
 
-Этот проект предоставляет готовое решение для запуска zapret в изолированной Docker-среде с возможностью подключения через Shadowsocks и SOCKS5.
-
-- Компактный размер (~30 МБ)
 - Изоляция zapret в отдельном контейнере
 - Простая интеграция с sing-box, Xray и другими прокси-клиентами
-- Удобное управление трафиком определенных доменов/сервисов
 
 > [!CAUTION]
 > В режиме `nfqws` контейнер работает только на Linux из-за отсутствия `nfqueue` на других ОС
