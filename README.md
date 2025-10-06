@@ -150,6 +150,9 @@ docker compose restart
 
 ### Поиск стратегий
 
+> [!WARNING]
+> Перед поиском стратегий нужно обязательно остановить zapret командой `docker compose exec ss-zapret sh /opt/zapret/init.d/sysv/zapret stop`
+
 Поиск стратегий осуществляется скриптом `blockcheck.sh`. Этот скрипт подбирает оптимальные стратегии для вашего домашнего/хостинг провайдера:
 
 ```bash
@@ -176,6 +179,8 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 ```bash
 docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IPVS=4 ENABLE_HTTP=0 ENABLE_HTTPS_TLS12=0 ENABLE_HTTPS_TLS13=1 ENABLE_HTTP3=0 REPEATS=8 PARALLEL=1 SCANLEVEL=standard BATCH=1 DOMAINS="xxxxxx.googlevideo.com" /opt/zapret/blockcheck.sh'
 ```
+
+После поиска стратегий запустите zapret командой `docker compose exec ss-zapret sh /opt/zapret/init.d/sysv/zapret start`, либо перезапустив контейнер.
 
 ### Интеграция с прокси-клиентами
 
