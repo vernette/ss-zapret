@@ -475,32 +475,37 @@ services:
 > [!WARNING]
 > Не всегда на клиентах сразу заработает Instagram в браузере, возможно придётся поиграться с DNS
 
-Чаще всего IP Instagram будет заблокирован и он будет работать только в мобильном приложении.
+Чаще всего IP Instagram будет заблокирован и будет работать только в мобильном приложении.
 
-Чтобы решить эту проблему, нам нужно найти незаблокированный IP и прописать его в `/etc/hosts` на сервере:
+Чтобы решить эту проблему, нам нужно найти незаблокированный IP и прописать его в `docker-compose.yml` на сервере:
+
+```yaml
+ss-zapret:
+  image: vernette/ss-zapret:v71.4
+  container_name: zapret-proxy
+  restart: unless-stopped
+  ...
+  healthcheck:
+    test: [
+      "CMD-SHELL",
+      "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1"
+    ]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 3s
+  extra_hosts:
+    instagram.com: "незаблокированный_ip"
+    www.instagram.com: "незаблокированный_ip"
+  cap_add:
+    - NET_ADMIN
+```
+> Например instagram.com: "11.22.33.44"
+
+После чего перезапустить compose, чтобы он прописал изменения в файл `/etc/hosts` контейнера:
 
 ```bash
-sudoedit /etc/hosts
-```
-
-Вписываем следующее в самый конец:
-
-```
-незаблокированный_ip instagram.com www.instagram.com
-```
-
-> Например 11.22.33.44 instagram.com www.instagram.com
-
-После этого нам нужно будет установить `systemd-resolved`, чтобы файл `/etc/hosts` читался нашим контейнером и при необходимости можно было искать стратегии для Instagram:
-
-```bash
-sudo apt install systemd-resolved
-```
-
-После чего перезапустить контейнер `ss-zapret`, чтобы он увидел новый `/etc/hosts`:
-
-```bash
-docker container restart zapret-proxy
+docker compose down && docker compose up -d
 ```
 
 ## Сценарии использования
