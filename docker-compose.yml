@@ -1,6 +1,6 @@
 services:
   ss-zapret:
-    image: vernette/ss-zapret:v72.1
+    image: vernette/ss-zapret:v72.2
     container_name: zapret-proxy
     restart: unless-stopped
     environment:

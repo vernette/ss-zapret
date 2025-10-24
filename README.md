@@ -1,4 +1,4 @@
-![Zapret Version](https://img.shields.io/badge/zapret-v72.1-red)
+![Zapret Version](https://img.shields.io/badge/zapret-v72.2-red)
 ![Docker Pulls](https://img.shields.io/docker/pulls/vernette/ss-zapret?logo=docker)
 
 Docker-контейнер на основе [zapret от bol-van](https://github.com/bol-van/zapret) с интегрированным Shadowsocks и SOCKS5 для подключения к контейнеру. Предназначен для удобной маршрутизации трафика через изолированную среду без модификации основной сети.
