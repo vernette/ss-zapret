@@ -346,58 +346,55 @@ docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' zapr
 
 #### Интеграция в существующий проект
 
-Вы можете интегрировать контейнер `ss-zapret` в существующий проект, например, с Xray или sing-box. Это позволит использовать имя сервиса вместо IP-адреса в конфигурации.
+Вы можете интегрировать контейнер ss-zapret в существующий проект, например, с Xray или sing-box, используя внешнюю Docker-сеть. Это позволит контейнерам разных проектов взаимодействовать друг с другом через имена сервисов вместо IP-адресов.
 
-1. Клонируйте основной репозиторий:
+Покажу интеграцию на примере другого моего репозитория - [steal-oneself-examples](https://github.com/vernette/steal-oneself-examples)
+
+##### Создание внешней сети
+
+Создайте общую Docker-сеть, которую будут использовать оба проекта:
+
+```bash
+docker network create selfsteal
+```
+
+> В данном случае `selfsteal` - пример названия сети, можете использовать своё
+
+##### Настройка ss-zapret
+
+Клонируйте репозиторий:
 
 ```bash
 git clone https://github.com/vernette/ss-zapret
 cd ss-zapret
 ```
 
-2. Скопируйте `config.default` в директорию вашего проекта:
+Создайте файл `.env` на основе примера:
 
 ```bash
-cp config.default /path/to/your/project/zapret_config
+cp .env.example .env
 ```
 
-3. Добавьте переменные окружения напрямую в `docker-compose.yml` вашего проекта или скопируйте `.env.example`:
-
-```bash
-cp .env.example /path/to/your/project/.env
-```
-
-4. Добавьте сервис `ss-zapret` в ваш `docker-compose.yml`:
+Отредактируйте `docker-compose.yml` для подключения к внешней сети, добавив в конфигурацию созданную сеть:
 
 ```yaml
 services:
   ss-zapret:
-    image: vernette/ss-zapret:latest
-    restart: always
-    environment:
-      - SS_PORT=${SS_PORT}
-      - SOCKS_PORT=${SOCKS_PORT}
-      - SS_PASSWORD=${SS_PASSWORD}
-      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
-      - SS_TIMEOUT=${SS_TIMEOUT}
-      - SS_VERBOSE=1
+    ...
     volumes:
-      - ./zapret_config:/opt/zapret/config
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 2s
-    cap_add:
-      - NET_ADMIN
+      - ./config:/opt/zapret/config
+    networks:
+      - selfsteal
+    ...
+
+networks:
+  selfsteal:
+    external: true
 ```
 
-Пример из другого моего репозитория - [steal-oneself-examples](https://github.com/vernette/steal-oneself-examples):
+##### Настройка основного проекта
+
+В основном проекте добавляем подключение к той же внешней сети:
 
 ```yaml
 services:
@@ -410,45 +407,39 @@ services:
       - ./caddy/data:/data
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./caddy/templates:/srv
+    networks:
+      - selfsteal
 
   xray:
-    image: ghcr.io/xtls/xray-core:25.1.1
+    image: ghcr.io/xtls/xray-core:25.6.8
     restart: always
     ports:
       - "443:443"
     volumes:
-      - ./xray:/etc/xray
-      - ./xray_data:/usr/local/share/xray
-    depends_on:
-      ss-zapret:
-        condition: service_healthy
+      - ./xray:/usr/local/etc/xray/
+    networks:
+      - selfsteal
 
-  ss-zapret:
-    image: vernette/ss-zapret:latest
-    restart: always
-    environment:
-      - SS_PORT=${SS_PORT}
-      - SS_PASSWORD=${SS_PASSWORD}
-      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
-      - SS_TIMEOUT=${SS_TIMEOUT}
-      - SOCKS_PORT=${SOCKS_PORT}
-    volumes:
-      - ./zapret_config:/opt/zapret/config
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 2s
-    cap_add:
-      - NET_ADMIN
+networks:
+  selfsteal:
+    external: true
 ```
 
-5. В конфигурации Xray или sing-box используйте имя сервиса `ss-zapret` вместо IP-адреса:
+#### Запуск проектов
+
+Запустите оба проекта:
+
+```bash
+# В директории ss-zapret
+docker-compose up -d
+
+# В директории вашего основного проекта
+docker-compose up -d
+```
+
+##### Использование в конфигурации
+
+В конфигурации Xray или sing-box используйте имя сервиса `ss-zapret` для подключения:
 
 ```json
 {
@@ -456,7 +447,7 @@ services:
     {
       "tag": "ss-zapret-out",
       "type": "shadowsocks",
-      "server": "ss-zapret", // Используем имя сервиса
+      "server": "ss-zapret",
       "server_port": 8388,
       "method": "chacha20-ietf-poly1305",
       "password": "SuperSecurePassword"
@@ -465,7 +456,7 @@ services:
 }
 ```
 
-Это позволит Docker автоматически разрешать имя сервиса в IP-адрес контейнера.
+Docker автоматически разрешит имя сервиса в IP-адрес внутри общей сети `selfsteal`.
 
 ## Работа Instagram в браузере
 
@@ -500,6 +491,7 @@ ss-zapret:
   cap_add:
     - NET_ADMIN
 ```
+
 > Например instagram.com: "11.22.33.44"
 
 После чего перезапустить compose, чтобы он прописал изменения в файл `/etc/hosts` контейнера:
