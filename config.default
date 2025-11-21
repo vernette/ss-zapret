@@ -35,7 +35,7 @@ NFQWS_UDP_PKT_OUT=$((6+$AUTOHOSTLIST_RETRANS_THRESHOLD))
 NFQWS_UDP_PKT_IN=0
 NFQWS_OPT="
 --filter-tcp=80 --methodeol --new
---filter-tcp=443 --hostlist-domains=googlevideo.com --dpi-desync=multisplit --dpi-desync-split-pos=10 --dpi-desync-split-seqovl=1 --new
+--filter-tcp=443 --hostlist-domains=googlevideo.com,youtubei.googleapis.com --dpi-desync=multisplit --dpi-desync-split-pos=10 --dpi-desync-split-seqovl=1 --new
 --filter-tcp=443 --hostlist-domains=updates.discord.com --dpi-desync=fakedsplit --dpi-desync-fooling=badseq --dpi-desync-split-pos=1 --new
 --filter-tcp=443 --dpi-desync=multidisorder --dpi-desync-split-pos=1 --new
 --filter-udp=50000-50099 --filter-l7=discord,stun --dpi-desync=fake --new
