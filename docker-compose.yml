@@ -17,6 +17,8 @@ services:
       - "127.0.0.1:${SOCKS_PORT}:${SOCKS_PORT}/udp"
     volumes:
       - ./config:/opt/zapret/config
+      - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
+      - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
     healthcheck:
       test: [
         "CMD-SHELL",
