@@ -27,6 +27,7 @@ Docker-контейнер на основе [zapret от bol-van](https://github
 - [Изменение конфигурации](#изменение-конфигурации)
 - [Расширенные возможности](#расширенные-возможности)
   - [Поиск стратегий](#поиск-стратегий)
+  - [Custom.d скрипты](#customd-скрипты)
   - [Проверка работы стратегий](#проверка-работы-стратегий)
   - [Интеграция с прокси-клиентами](#интеграция-с-прокси-клиентами)
 - [Работа Instagram в браузере](#работа-instagram-в-браузере)
@@ -183,6 +184,37 @@ docker compose exec ss-zapret sh /opt/zapret/init.d/sysv/zapret start`
 ```
 
 Либо перезапустите контейнер:
+
+```bash
+docker compose restart
+```
+
+### Custom.d скрипты
+
+После первого запуска контейнера в директории проекта будет создана директория `scripts`:
+
+```
+scripts
+├── custom.d
+└── examples
+    ├── 10-keenetic-udp-fix
+    ├── 20-fw-extra
+    ├── 40-webserver
+    ├── 50-dht4all
+    ├── 50-discord-media
+    ├── 50-nfqws-ipset
+    ├── 50-quic4all
+    ├── 50-stun4all
+    └── 50-wg4all
+```
+
+Для того, чтобы использовать эти скрипты, необходимо скопировать их из директории `examples` в директорию `custom.d`. Например, скопируем скрипты для Discord и Stun (Telegram, WhatsApp):
+
+```bash
+cp scripts/examples/{50-discord-media,50-stun4all} scripts/custom.d
+```
+
+После чего необходимо перезапустить контейнер, чтобы скрипты применились:
 
 ```bash
 docker compose restart
