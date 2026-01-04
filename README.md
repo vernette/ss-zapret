@@ -6,6 +6,9 @@ Docker-контейнер на основе [zapret от bol-van](https://github
 - Изоляция zapret в отдельном контейнере
 - Простая интеграция с sing-box, Xray и другими прокси-клиентами
 
+> [!NOTE]
+> [ss-zapret2](https://github.com/vernette/ss-zapret2)
+
 Контейнер был протестирован на следующих хостингах:
 
 - [RocketCloud](https://cloudcore.ru/?affiliate_uuid=ce1874ee-4940-48b1-b37d-60e03cfada66)
