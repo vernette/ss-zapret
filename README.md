@@ -1,4 +1,4 @@
-![Zapret Version](https://img.shields.io/badge/zapret-v72.5-red)
+![Zapret Version](https://img.shields.io/badge/zapret-v72.6-red)
 ![Docker Pulls](https://img.shields.io/docker/pulls/vernette/ss-zapret?logo=docker)
 
 Docker-контейнер на основе [zapret от bol-van](https://github.com/bol-van/zapret) с интегрированным Shadowsocks и SOCKS5 для подключения к контейнеру. Предназначен для удобной маршрутизации трафика через изолированную среду без модификации основной сети.
@@ -251,7 +251,7 @@ curl --connect-to ::speedtest.selectel.ru https://manifest.googlevideo.com/100MB
 
 ```yaml
 ss-zapret:
-  image: vernette/ss-zapret:v72.5
+  image: vernette/ss-zapret:v72.6
   container_name: zapret-proxy
   restart: unless-stopped
   ...
