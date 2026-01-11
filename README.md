@@ -183,7 +183,7 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 После завершения поиска стратегий запустите zapret командой:
 
 ```bash
-docker compose exec ss-zapret sh /opt/zapret/init.d/sysv/zapret start`
+docker compose exec ss-zapret sh /opt/zapret/init.d/sysv/zapret start
 ```
 
 Либо перезапустите контейнер:
