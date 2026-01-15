@@ -180,6 +180,21 @@ docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IP
 docker compose exec ss-zapret sh -c 'SKIP_TPWS=1 SKIP_DNSCHECK=1 SECURE_DNS=0 IPVS=4 ENABLE_HTTP=0 ENABLE_HTTPS_TLS12=0 ENABLE_HTTPS_TLS13=1 ENABLE_HTTP3=0 REPEATS=8 PARALLEL=1 SCANLEVEL=standard BATCH=1 DOMAINS="xxxxxx.googlevideo.com" /opt/zapret/blockcheck.sh'
 ```
 
+Вместо `xxxxxx.googlevideo.com` можно указать адрес ближайшего GGC сервера, который можно найти командой (требуется установленный `curl` и `jq`):
+
+```bash
+curl "https://www.youtube.com/youtubei/v1/player" \
+  --silent \
+  --request POST \
+  --json '{"videoId":"dQw4w9WgXcQ","context":{"client":{"clientName":"WEB","clientVersion":"2.20230810.05.00"}}}' \
+  --proxy socks5://localhost:1080 |
+  jq -r ".streamingData.serverAbrStreamingUrl" |
+  awk -F'/' '{print $3}'
+```
+
+> [!NOTE]
+> Обратите внимание, что запрос мы делаем через локальный прокси контейнера
+
 После завершения поиска стратегий запустите zapret командой:
 
 ```bash
